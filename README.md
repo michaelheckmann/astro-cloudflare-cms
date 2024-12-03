@@ -1,6 +1,6 @@
 # Astro Cloudflare CMS
 
-This is a boilerplate for setting up simple CMS together with an Astro site.
+This is a boilerplate for setting up a simple CMS together with an Astro site.
 
 ## Features
 
