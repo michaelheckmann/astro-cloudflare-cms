@@ -5,7 +5,7 @@ const required = (schema: z.ZodString, field: Field) =>
   schema.min(1, { message: `${field.label} is required` });
 
 export const booleanValidation = (
-  field: Extract<Field, { type: "boolean" }>,
+  _field: Extract<Field, { type: "boolean" }>,
 ) => {
   return z.boolean();
 };

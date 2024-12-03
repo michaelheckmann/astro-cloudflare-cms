@@ -10,6 +10,6 @@ type Props = {
   contentItemField: Extract<Field, { type: "string" }>;
 };
 
-export const StringField = ({ field, contentItemField }: Props) => {
+export const StringField = ({ field }: Props) => {
   return <Input {...coerceRhfFieldToString(field)} />;
 };

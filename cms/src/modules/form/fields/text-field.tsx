@@ -10,7 +10,7 @@ type Props = {
   contentItemField: Extract<Field, { type: "text" }>;
 };
 
-export const TextField = ({ field, contentItemField }: Props) => {
+export const TextField = ({ field }: Props) => {
   return (
     <AutosizeTextarea maxHeight={500} {...coerceRhfFieldToString(field)} />
   );

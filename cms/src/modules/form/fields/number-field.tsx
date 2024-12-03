@@ -10,7 +10,7 @@ type Props = {
   contentItemField: Extract<Field, { type: "number" }>;
 };
 
-export const NumberField = ({ field, contentItemField }: Props) => {
+export const NumberField = ({ field }: Props) => {
   const rhfField = coerceRhfFieldToNumber(field);
   return (
     <Input
