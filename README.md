@@ -1,3 +1,5 @@
+<img width="1398" alt="image" src="https://github.com/user-attachments/assets/a3b8ad95-5644-4194-892f-9a80257f7b35">
+
 # Astro Cloudflare CMS
 
 This is a boilerplate for setting up a simple CMS together with an Astro site.
