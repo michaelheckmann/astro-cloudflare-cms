@@ -1,0 +1,11 @@
+{
+  "name": "astro-cloudflare-cms",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf node_modules",
+    "format": "biome format --write ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4"
+  }
+}
