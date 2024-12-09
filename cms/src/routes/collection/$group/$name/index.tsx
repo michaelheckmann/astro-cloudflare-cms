@@ -1,3 +1,6 @@
+// biome-ignore lint/style/useNodejsImportProtocol: We want to use the buffer package in the browser
+import { Buffer } from "buffer";
+
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -9,6 +12,8 @@ import {
 } from "@/components/ui/table";
 
 import { CONFIG } from "@/config";
+import { fileToContent } from "@/lib/file";
+import { getCollectionEntryDisplayName } from "@/utils/get-collection-entry-display-name";
 import { isMatchingPath } from "@/utils/is-matching-path";
 import { getFolderPath, removeExtension } from "@/utils/path-utils";
 import type { OctokitFileResponse, OctokitResponse } from "@/utils/types";
@@ -56,7 +61,14 @@ export const Route = createFileRoute("/collection/$group/$name/")({
         isMatchingPath(contentItem.path, item.path),
     ) as OctokitFileResponse[];
 
-    return { group, contentItem, files };
+    const filesWithContent = files.map((file) => {
+      const fileContent = Buffer.from(file.content, "base64").toString("utf-8");
+      const content = fileToContent({ content: fileContent, contentItem });
+      return { ...file, content };
+    });
+
+    // console.log(filesWithContent);
+    return { group, contentItem, files: filesWithContent };
   },
   staleTime: 10_000, // 10 seconds
 });
@@ -100,7 +112,9 @@ function RouteComponent() {
         {files.map((file, i) => (
           <TableRow key={file.sha}>
             <TableCell className="font-medium">{i + 1}</TableCell>
-            <TableCell>{file.name}</TableCell>
+            <TableCell>
+              {getCollectionEntryDisplayName(file, contentItem)}
+            </TableCell>
             <TableCell className="text-right">
               <div className="flex justify-end gap-4">
                 <Button variant="outline" size="sm" className="text-xs" asChild>

@@ -23,7 +23,30 @@ app.get("/repo/:path/contents", async (c) => {
       headers: { Accept: "application/vnd.github.v3+json" },
     });
 
-    return c.json(response.data);
+    // Only retrieved a single file
+    if (!Array.isArray(response.data)) {
+      return c.json(response.data);
+    }
+
+    // Retrieved a directory
+    const contents = await Promise.all(
+      response.data
+        .filter((entry) => entry.type === "file")
+        .map((entry) => {
+          return octokit.rest.repos.getContent({
+            owner: CONFIG.meta.owner,
+            repo: CONFIG.meta.repo,
+            ref: CONFIG.meta.branch,
+            path: entry.path,
+          });
+        }),
+    );
+
+    const data = contents
+      .map(({ data }) => data)
+      .filter((entry) => !Array.isArray(entry));
+
+    return c.json(data);
   } catch (error) {
     if (error.status === 404) {
       return c.json({ message: "File not found" }, 404);

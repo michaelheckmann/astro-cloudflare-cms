@@ -59,8 +59,6 @@ function RouteComponent() {
   const { mutateAsync } = useMutation({
     mutationFn: async (values: Record<string, unknown>) => {
       const file = contentToFile({ values, contentItem });
-      console.log("mutationFn: ~ file:", values);
-      console.log("mutationFn: ~ file:", file);
 
       const response = await fetch(
         // We need to use the entry here, because for collection items, the path is dynamic

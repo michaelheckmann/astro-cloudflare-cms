@@ -27,16 +27,28 @@ app.get("/repo/:path/contents", async (c) => {
         }),
       );
 
-      const contents = entries.map((entry, index) => {
+      const fileEntries = entries
+        .map((entry, index) => ({ entry, stats: stats[index] }))
+        .filter(({ stats }) => stats.isFile());
+
+      const contents = await Promise.all(
+        fileEntries.map(({ entry }) => {
+          const entryPath = join(filePath, entry);
+          return fs.readFile(entryPath, "utf-8");
+        }),
+      );
+
+      const data = fileEntries.map(({ entry, stats }, index) => {
         return {
           name: entry,
           path: `${path}/${entry}`,
-          type: stats[index].isDirectory() ? "dir" : "file",
-          sha: stats[index].mtime.getTime().toString(),
-          size: stats[index].size,
+          type: "file",
+          sha: stats.mtime.getTime().toString(),
+          content: Buffer.from(contents[index]).toString("base64"),
+          size: stats.size,
         };
       });
-      return c.json(contents);
+      return c.json(data);
     }
 
     const content = await fs.readFile(filePath, "utf-8");
