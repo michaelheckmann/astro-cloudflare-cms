@@ -5,7 +5,6 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
 import { Toaster, toast } from "sonner";
 
@@ -25,7 +24,7 @@ export const Route = createRootRoute({
       </Layout>
       <Toaster />
       {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" /> */}
-      <TanStackRouterDevtools position="bottom-right" />
+      {/* <TanStackRouterDevtools position="bottom-right" /> */}
     </QueryClientProvider>
   ),
 });
