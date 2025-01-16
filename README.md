@@ -77,7 +77,7 @@ jobs:
           # Currently, only worker secrets are supported, page secrets need to be handled manually
           # https://github.com/cloudflare/wrangler-action/issues/304
           preCommands: |
-            echo '{"_GITUB_PAT": "${{ secrets._GITUB_PAT }}"}' > .env.json
+            echo '{"_GITHUB_PAT": "${{ secrets._GITHUB_PAT }}"}' > .env.json
           command: |
             pages secret bulk .env.json
             pages deploy dist
