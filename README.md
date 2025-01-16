@@ -42,6 +42,14 @@ With this setup, no additional database or CI/CD setup is needed. The Github rep
 
 ### Cloudflare Pages and Github Actions
 
+Make sure you have created a Cloudflare Pages project before running the auto-deploy Github Action.
+
+To create the project, run the following command:
+
+```bash
+npx wrangler pages project create <REPLACE_ME_PROJECT_NAME>
+```
+
 Use these Github Actions to deploy the CMS and the Astro site to Cloudflare Pages.
 
 `.github/workflows/cms-deployment.yml`
