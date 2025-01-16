@@ -39,3 +39,82 @@ The CMS is configured in the `cms/src/config.ts` file. Explore the config schema
 
 Both the CMS and the Astro site can be deployed to Cloudflare Pages. Make sure to set the Github Personal Access Token environment variables in the Cloudflare Pages dashboard for the CMS. The Astro site will consume the CMS data from the Github repository, so no additional environment variables are needed.
 With this setup, no additional database or CI/CD setup is needed. The Github repository acts as a database and Cloudflare Pages as the CI/CD pipeline which is triggered on every push to the repository.
+
+### Cloudflare Pages and Github Actions
+
+Use these Github Actions to deploy the CMS and the Astro site to Cloudflare Pages.
+
+`.github/workflows/cms-deployment.yml`
+
+```yaml
+name: CMS Deployment
+on:
+  push:
+    branches: [main]
+    paths: ["cms/**"]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Pages
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Install and Build
+        run: cd cms && pnpm install && pnpm run build          
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          packageManager: pnpm
+          workingDirectory: cms
+          # Currently, only worker secrets are supported, page secrets need to be handled manually
+          # https://github.com/cloudflare/wrangler-action/issues/304
+          preCommands: |
+            echo '{"_GITUB_PAT": "${{ secrets._GITUB_PAT }}"}' > .env.json
+          command: |
+            pages secret bulk .env.json
+            pages deploy dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+```
+
+`.github/workflows/web-deployment.yml`
+
+```yaml
+name: Web Deployment
+on:
+  push:
+    branches: [main]
+    paths: ["web/**"]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Pages
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Install and Build
+        run: cd web && pnpm install && pnpm run build
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          packageManager: pnpm
+          workingDirectory: web
+          command: pages deploy dist --project-name=<REPLACE_ME_PROJECT_NAME>
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+```
